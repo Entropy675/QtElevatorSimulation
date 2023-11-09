@@ -61,9 +61,16 @@ public slots:
     void doorClosed(int ev);
 
 private slots:
+    // buttons
     void buttonElevatorSubmit();
     void buttonPlaceOnFloor();
+    void buttonMoveToElevator();
 
+    // spin boxes
+    void spinBoxPlaceChange();
+    void spinBoxMoveChange();
+
+    // select boxes
     void elevatorSelected(int index);
     void floorSelected(int index);
 
@@ -76,16 +83,17 @@ private:
 	
 	// if there is no immediate available elevator, put request in this list as a FloorDirection
 	std::priority_queue<FloorDirection> earliestRequestTree;
-    // this list should be periodically checked and if there are any values and available elevators, pop from the root and work all the values out
+    // this list should be periodically checked and if there are any values
+    // and available elevators, pop from the root and work all the values out
 
+    void controlMoveButtonActivated();
+
+    // timers
     QTimer* requestScanTimer;
     QTimer* elevatorUpdateTimer;
 
-
+    // ui elements
     Ui::MainWindow* ui;
-    QComboBox* comboElevatorBox;
-    QWidget* elevatorWidget;
-    QGridLayout* elevatorGridLayout;
 };
 
 

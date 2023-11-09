@@ -36,6 +36,20 @@ int Floor::peopleOnFloor()
     return numPeople;
 }
 
+void Floor::addPeople(int n)
+{
+    numPeople += n;
+}
+
+bool Floor::removePeople(int n)
+{
+    if((numPeople - n) < 0)
+        return false;
+
+    numPeople -= n;
+    return true;
+}
+
 void Floor::handleUpButtonPress()
 {
     emit upButtonPressed(floorNum);

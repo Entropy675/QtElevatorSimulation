@@ -12,9 +12,11 @@ class Floor : public QGroupBox
 	
 public:
     Floor(int floorNum, QWidget *parent = nullptr);
-    ~Floor(); // may need this
+    ~Floor();
 
     int peopleOnFloor();
+    void addPeople(int);
+    bool removePeople(int); // returns true for success (cant be < 0)
 
 signals: // delegates to controller... emit to controller?
     void upButtonPressed(int floor);
