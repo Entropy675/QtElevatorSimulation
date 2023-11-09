@@ -28,7 +28,7 @@ private slots:
 
 private:
 	const int floorNum; // must be in member initialization list 
-    int numPeople;
+    int numPeople = 0;
 
     QGridLayout* groupLayout;
     QPushButton* upButton;

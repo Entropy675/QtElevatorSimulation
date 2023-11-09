@@ -57,18 +57,14 @@ public slots:
 
     // recieves from every elevator
     void elevatorFloorChanged(int floor, int ev);
-    void doorOpened(int ev);
-    void doorClosed(int ev);
+    void doorOpened(int flr, int ev);
+    void doorClosed(int flr, int ev);
 
 private slots:
     // buttons
     void buttonElevatorSubmit();
     void buttonPlaceOnFloor();
     void buttonMoveToElevator();
-
-    // spin boxes
-    void spinBoxPlaceChange();
-    void spinBoxMoveChange();
 
     // select boxes
     void elevatorSelected(int index);
@@ -87,6 +83,7 @@ private:
     // and available elevators, pop from the root and work all the values out
 
     void controlMoveButtonActivated();
+    void updateButtonsPressedText(int elev);
 
     // timers
     QTimer* requestScanTimer;

@@ -32,8 +32,6 @@ ElevatorController::ElevatorController(Ui::MainWindow* u, int numElevators, int 
     connect(ui->pushElevatorButton, &QPushButton::clicked, this, &ElevatorController::buttonElevatorSubmit);
     connect(ui->pushPlaceButton, &QPushButton::clicked, this, &ElevatorController::buttonPlaceOnFloor);
     connect(ui->pushMoveButton, &QPushButton::clicked, this, &ElevatorController::buttonMoveToElevator);
-    connect(ui->spinBoxPlace, QOverload<int>::of(&QSpinBox::valueChanged), this, &ElevatorController::spinBoxPlaceChange);
-    connect(ui->spinBoxMove, QOverload<int>::of(&QSpinBox::valueChanged), this, &ElevatorController::spinBoxMoveChange);
 
     // keep in mind: "setWidget" and "setLayout" etc add to the ui tree, memory managed by Qt not Me :-)
 
@@ -91,7 +89,7 @@ ElevatorController::ElevatorController(Ui::MainWindow* u, int numElevators, int 
     {
         Elevator* ev = new Elevator(elevator);
         elevators.push_back(ev);
-
+        updateButtonsPressedText(elevator - 1);
         // should be connecting slot in elevator to signals in elevator controller
         connect(this, &ElevatorController::updateElevators, ev, &Elevator::updateElevator);
         connect(this, &ElevatorController::sendRequestToElevator, ev, &Elevator::pressButton);
@@ -127,21 +125,35 @@ ElevatorController::~ElevatorController() // clean up floors
     delete elevatorUpdateTimer;
 }
 
+void ElevatorController::updateButtonsPressedText(int evIndex)
+{
+    QString buttonList = "";
+    const std::vector<int>& blist = elevators[evIndex]->getButtonsPressed();
+    for(const int& a : blist)
+    {
+        buttonList += QString::number(a) + " ";
+    }
+    ui->textBrowserButtonsPressed->setPlainText(buttonList);
+}
+
 void ElevatorController::buttonElevatorSubmit()
 {
     // get the int values from the combo boxes
-    int eb = ui->comboElevatorBox->currentText().remove(0, 10).toInt();
+    int ev = ui->comboElevatorBox->currentText().remove(0, 10).toInt();
     int fb = ui->comboFloorBox->currentText().remove(0, 7).toInt();
 
-    qDebug() << "BUTTON - elevator submit pressed eb: " << eb << " fb: " << fb;
-    //ui->passengerNumber->display(eb * fb);
+    qDebug() << "BUTTON - elevator submit pressed elev: " << ev << " floor button: " << fb;
+
+    elevators[ev - 1]->pressButton(fb);
+
+    updateButtonsPressedText(ev - 1);
 }
 
 void ElevatorController::buttonPlaceOnFloor()
 {
     qDebug() << "BUTTON buttonPlaceOnFloor.... spawning ppl on floor";
 
-    const int flr = ui->comboFloorBox->currentText().remove(0, 7).toInt();
+    const int flr = ui->comboFloorBox->currentText().remove(0, 7).toInt() - 1;
     floors[flr]->addPeople(ui->spinBoxPlace->value());
     ui->passangerOnFloorNumber->display(floors[flr]->peopleOnFloor());
 
@@ -152,80 +164,84 @@ void ElevatorController::buttonMoveToElevator()
 {
     qDebug() << "BUTTON: buttonMoveToElevator.... moving ppl ";
     // So we need to call some func, that finds the
-    //
-}
 
-void ElevatorController::spinBoxPlaceChange()
-{
-    qDebug() << "renewSelectedPlaceValue.... renewing place value ppl ";
-}
-
-void ElevatorController::spinBoxMoveChange()
-{
-    qDebug() << "renewSelectedMoveValue.... renewing the move ppl value";
 }
 
 void ElevatorController::controlMoveButtonActivated()
 {
     // we want to check if there is an elevator on the floor in door open state
     // & set the control button to active or not based on it
+    qDebug() << "BUTTON ACTIVATE: Activating/Deactivating the Move Button to allow moving ppl ";
+
+    const int flr = ui->comboFloorBox->currentText().remove(0, 7).toInt() - 1;
+    Elevator* availableEv = nullptr;
+
+    for(Elevator* ev : elevators)
+    {
+        if(ev->currentFloor() == flr && ev->currentState() == Elevator::DoorsOpen)
+        {
+            availableEv = ev;
+            break;
+        }
+    }
+
+    if(availableEv != nullptr)
+        ui->pushMoveButton->setEnabled(true);
+    else if(ui->pushMoveButton->isEnabled())
+        ui->pushMoveButton->setEnabled(false);
 }
 
 void ElevatorController::elevatorSelected(int index)
 {
     ui->passengerNumber->display(elevators[index]->numPassengers());
 
-    QString buttonList = "";
-    const std::vector<int>& blist = elevators[index]->getButtonsPressed();
-    for(const int& a : blist)
-    {
-        buttonList += QString::number(a) + " ";
-    }
-    ui->textBrowserButtonsPressed->setPlainText(buttonList);
+    updateButtonsPressedText(index);
 
     qDebug()  << "COMBO BOX: Elevator selected. Elevator: " << index;
 }
-
 
 void ElevatorController::floorSelected(int index)
 {
     // update the segment display for passangers
     ui->passangerOnFloorNumber->display(floors[index]->peopleOnFloor());
     qDebug()  << "COMBO BOX: Floor selected. Floor: " << index;
+
+    controlMoveButtonActivated(); // potentially changes move buttons state
 }
 
-void ElevatorController::doorOpened(int ev)
+void ElevatorController::doorOpened(int flr, int ev)
 {
     // a door has opened
-    qDebug()  << "Door opened! Elevator: " << ev;
+    qDebug()  << "EV signal: Door opened! Elevator: " << ev;
 }
 
-void ElevatorController::doorClosed(int ev)
+void ElevatorController::doorClosed(int flr, int ev)
 {
     // a door has closed
-    qDebug()  << "Door closed!! Elevator: " << ev;
+    qDebug()  << "EV signal: Door closed!! Elevator: " << ev;
 }
 
 void ElevatorController::elevatorFloorChanged(int floor, int ev)
 {
     // each elevator emits this when the moved to new floor
-    qDebug()  << "Elevator floor changed, floor: " << floor << " elevator: " << ev;
+    qDebug()  << "EV signal: Elevator floor changed, floor: " << floor << " elevator: " << ev;
 }
 
 void ElevatorController::buttonPressedUp(int floor)
 {
     // an up button on a floor has been pressed
-    qDebug()  << "Floor up button pressed: " << floor;
+    qDebug()  << "Floor signal: Floor up button pressed: " << floor;
 }
 
 void ElevatorController::buttonPressedDown(int floor)
 {
     // a down button on a floor has been pressed
-    qDebug() << "Floor down button pressed: " << floor;
+    qDebug() << "Floor signal: Floor down button pressed: " << floor;
 }
 
 void ElevatorController::scanRequestTree()
 {
     // happen on a timer, scan request tree realloc elevators if free
-    qDebug() << "scanRequestTree pings "; // << i++;
+    if(AGGRESSIVE_LOGGING)
+        qDebug() << "scanRequestTree pings "; // << i++;
 }

@@ -18,9 +18,9 @@ Floor::Floor(int fn, QWidget *parent) : floorNum(fn), QGroupBox(parent)
     connect(upButton, &QPushButton::clicked, this, &Floor::handleUpButtonPress);
     connect(downButton, &QPushButton::clicked, this, &Floor::handleDownButtonPress);
 
-    if(DEBUG)
+    if(DEBUG_GENVALUES)
     {
-        numPeople = fn;
+        numPeople = fn + 1;
     }
 }
 

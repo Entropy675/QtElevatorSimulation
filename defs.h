@@ -8,7 +8,9 @@
 #define NUM_FLOORS					8
 #define NUM_ELEVATORS				4
 
-#define DEBUG                       true
+#define DEBUG_GENVALUES             true
+#define AGGRESSIVE_LOGGING          false
+
 
 class Elevator;
 class ElevatorController;
