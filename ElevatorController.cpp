@@ -6,6 +6,7 @@
 #include <QPushButton>
 #include <QDebug>
 #include <QChar>
+#include <queue>
 
 ElevatorController::ElevatorController(Ui::MainWindow* u, int numElevators, int numFloors)
 {
@@ -32,6 +33,7 @@ ElevatorController::ElevatorController(Ui::MainWindow* u, int numElevators, int 
     connect(ui->pushElevatorButton, &QPushButton::clicked, this, &ElevatorController::buttonElevatorSubmit);
     connect(ui->pushPlaceButton, &QPushButton::clicked, this, &ElevatorController::buttonPlaceOnFloor);
     connect(ui->pushMoveButton, &QPushButton::clicked, this, &ElevatorController::buttonMoveToElevator);
+    connect(ui->spinBoxMove, qOverload<int>(&QSpinBox::valueChanged), this, &ElevatorController::moveComboBoxChange);
 
     // keep in mind: "setWidget" and "setLayout" etc add to the ui tree, memory managed by Qt not Me :-)
 
@@ -91,22 +93,23 @@ ElevatorController::ElevatorController(Ui::MainWindow* u, int numElevators, int 
         elevators.push_back(ev);
         updateButtonsPressedText(elevator - 1);
         // should be connecting slot in elevator to signals in elevator controller
-        connect(this, &ElevatorController::updateElevators, ev, &Elevator::updateElevator);
         connect(this, &ElevatorController::sendRequestToElevator, ev, &Elevator::pressButton);
         connect(this, &ElevatorController::helpButton, ev, &Elevator::helpButtonPressed);
         connect(this, &ElevatorController::emergency, ev, &Elevator::emergency);
         connect(ev, &Elevator::floorChanged, this, &ElevatorController::elevatorFloorChanged);
         connect(ev, &Elevator::doorOpened, this, &ElevatorController::doorOpened);
         connect(ev, &Elevator::doorClosed, this, &ElevatorController::doorClosed);
+        connect(ev, &Elevator::overloaded, this, &ElevatorController::overloaded);
+
+        QThread* evThread = new QThread;
+        ev->moveToThread(evThread);
+        evThread->start();
+        threads.push_back(evThread);
     }
 
     requestScanTimer = new QTimer(this);
     connect(requestScanTimer, &QTimer::timeout, this, &ElevatorController::scanRequestTree);
-    requestScanTimer->start(500);  // Execute scanRequestTree every 10 milliseconds (0.01 seconds)
-
-    elevatorUpdateTimer = new QTimer(this);
-    connect(elevatorUpdateTimer, &QTimer::timeout, this, &ElevatorController::updateElevators);
-    elevatorUpdateTimer->start(1000); // Emit the signal every 1000 milliseconds (1 second)
+    requestScanTimer->start(SCAN_REQUEST_TREE_SECS * 1000);  // Scan backup request tree every 15 seconds, in case overflow
 
     qDebug() << "Elevator Controller Initialized";
 }
@@ -116,19 +119,23 @@ ElevatorController::~ElevatorController() // clean up floors
     for(int i = 0; i < floors.size(); i++)
         delete floors[i];
 
-    for(int i = 0; i < elevators.size(); i++)
-        delete elevators[i];
-
-    elevatorUpdateTimer->stop();
     requestScanTimer->stop();
     delete requestScanTimer;
-    delete elevatorUpdateTimer;
+
+    for(int i = 0; i < threads.size(); i++)
+    {
+        threads[i]->quit();
+        threads[i]->wait();
+        delete threads[i];
+    }
 }
+
+// --- UI INPUT & CALLBACK FUNCS ---
 
 void ElevatorController::updateButtonsPressedText(int evIndex)
 {
     QString buttonList = "";
-    const std::vector<int>& blist = elevators[evIndex]->getButtonsPressed();
+    const std::set<int>& blist = elevators[evIndex]->getButtonsPressed();
     for(const int& a : blist)
     {
         buttonList += QString::number(a) + " ";
@@ -209,6 +216,18 @@ void ElevatorController::floorSelected(int index)
     controlMoveButtonActivated(); // potentially changes move buttons state
 }
 
+void ElevatorController::moveComboBoxChange(int index)
+{
+    if(index > ui->passangerOnFloorNumber->value())
+    {
+        ui->spinBoxMove->setValue(ui->passangerOnFloorNumber->value());
+    }
+}
+
+// --- UI INPUT & CALLBACK FUNCS ---
+
+// --- UI UPDATE / EV SOCKET FUNCS ---
+
 void ElevatorController::doorOpened(int flr, int ev)
 {
     // a door has opened
@@ -221,27 +240,74 @@ void ElevatorController::doorClosed(int flr, int ev)
     qDebug()  << "EV signal: Door closed!! Elevator: " << ev;
 }
 
-void ElevatorController::elevatorFloorChanged(int floor, int ev)
+void ElevatorController::overloaded(int flr, int ev)
+{
+    // a door has closed
+    qDebug()  << "EV signal: Elevator overloaded!! Elevator: " << ev;
+}
+
+void ElevatorController::elevatorFloorChanged(int floor, int ev, bool up)
 {
     // each elevator emits this when the moved to new floor
-    qDebug()  << "EV signal: Elevator floor changed, floor: " << floor << " elevator: " << ev;
+    qDebug()  << "EV signal: Elevator floor changed, floor: " << floor << " elevator: " << ev << " up dir: " << up;
 }
+
+// --- UI UPDATE / EV SOCKET FUNCS ---
+
+// --- EV REQUEST FUNCS ---
 
 void ElevatorController::buttonPressedUp(int floor)
 {
     // an up button on a floor has been pressed
     qDebug()  << "Floor signal: Floor up button pressed: " << floor;
+    handleFlrPressed(floor, true);
 }
 
 void ElevatorController::buttonPressedDown(int floor)
 {
     // a down button on a floor has been pressed
     qDebug() << "Floor signal: Floor down button pressed: " << floor;
+    handleFlrPressed(floor, false);
+}
+
+void ElevatorController::handleFlrPressed(int floor, bool up)
+{
+    Elevator* found = nullptr;
+    for(Elevator* pEv : elevators)
+    {
+        if(pEv->currentState() == Elevator::Idle)
+        {
+            found = pEv;
+            break;
+        }
+
+        if(pEv->currentState() == Elevator::MovingUp && (up ? pEv->currentFloor() < floor :  pEv->currentFloor() > floor))
+        {
+            found = pEv;
+            break;
+        }
+
+        if(pEv->currentState() == Elevator::MovingDown)
+        {
+            found = pEv;
+            break;
+        }
+    }
+
+    if(found)
+        found->moveTofloor(floor);
+    else
+        earliestRequestTree.push(FloorDirection(floor, up));
 }
 
 void ElevatorController::scanRequestTree()
 {
     // happen on a timer, scan request tree realloc elevators if free
-    if(AGGRESSIVE_LOGGING)
-        qDebug() << "scanRequestTree pings "; // << i++;
+    //if(AGGRESSIVE_LOGGING)
+    qDebug() << "scanRequestTree pings "; // << i++;
+    FloorDirection fd = earliestRequestTree.top();
+    earliestRequestTree.pop();
+    handleFlrPressed(fd.num, fd.up);
 }
+
+// --- EV REQUEST FUNCS ---

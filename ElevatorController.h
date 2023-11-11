@@ -6,6 +6,7 @@
 #include <QComboBox>
 #include <QTimer>
 #include <QMainWindow>
+#include <QThread>
 
 #include "./ui_mainwindow.h"
 
@@ -46,19 +47,20 @@ public:
 
 signals:
     void sendRequestToElevator(int ev, int flr);
-    void updateElevators(); // constant signal on timer
     void helpButton(int elevatorId);
     void emergency();
 
 public slots:
-    // recieve signals from floors
+    // recieve signals from floors, relay to EVs
 	void buttonPressedUp(int floor);
     void buttonPressedDown(int floor);
 
-    // recieves from every elevator
-    void elevatorFloorChanged(int floor, int ev);
+    // recieves from every elevator, handles UI
+    void elevatorFloorChanged(int floor, int ev, bool up);
     void doorOpened(int flr, int ev);
     void doorClosed(int flr, int ev);
+    void overloaded(int flr, int ev);
+    void emergency(int floor, int ev);
 
 private slots:
     // buttons
@@ -69,6 +71,7 @@ private slots:
     // select boxes
     void elevatorSelected(int index);
     void floorSelected(int index);
+    void moveComboBoxChange(int index);
 
     // constant scan on timer
     void scanRequestTree();
@@ -76,7 +79,8 @@ private slots:
 private:
     std::vector<Floor*> floors;
     std::vector<Elevator*> elevators;
-	
+    std::vector<QThread*> threads;
+
 	// if there is no immediate available elevator, put request in this list as a FloorDirection
 	std::priority_queue<FloorDirection> earliestRequestTree;
     // this list should be periodically checked and if there are any values
@@ -84,10 +88,10 @@ private:
 
     void controlMoveButtonActivated();
     void updateButtonsPressedText(int elev);
+    void handleFlrPressed(int floor, bool up);
 
     // timers
     QTimer* requestScanTimer;
-    QTimer* elevatorUpdateTimer;
 
     // ui elements
     Ui::MainWindow* ui;
