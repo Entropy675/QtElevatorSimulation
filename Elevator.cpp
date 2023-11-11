@@ -46,11 +46,17 @@ void Elevator::addPassengers(int x)
     passengers += x;
 }
 
+void Elevator::removePassengers(int x)
+{
+    passengers -= x;
+    if(passengers < 0)
+        passengers = 0;
+}
+
 void Elevator::resetEmergency()
 {
 
     qDebug() << id << ": Resetting from emergency...";
-    emergencyStart = false;
     state = Idle;
 }
 
@@ -107,7 +113,7 @@ void Elevator::updateElevator()
     if(callHelp)
     {
         qDebug() << id << ": Attempting to contact front desk... " << helpCounter++;
-        if(helpCounter == 6)
+        if(helpCounter > 5)
         {
             helpCounter = 1;
             qDebug() << id << ": CONNECTING 911 FOR EMERGENCY !!!";
@@ -249,17 +255,17 @@ void Elevator::updateElevator()
         break;
     case Emergency:
 
-        if(!emergencyStart)
-        {
-            emergencyStart = true;
-            emit emergencyOnBoard(curFloor, id);
-        }
+        emit emergencyOnBoard(curFloor, id);
+
 
         if(curFloor != 0)
         {
             curFloor -= 1;
             emit floorChanged(curFloor, id - 1, false);
         }
+
+
+        QThread::msleep(100);
 
         break;
     }
@@ -288,6 +294,25 @@ void Elevator::emergency()
     // go to floor 0 after doors close
     // Emergency request from external sources reached
     qDebug() << "!!! Emergency signal recieved: Elevator " << id;
+    if(state != Idle)
+    {
+        state = DoorsClosing;
+        emit doorClosed(curFloor, id);
+    }
 
+    emit emergencyOnBoard(curFloor, id);
     state = Emergency;
+}
+
+
+void Elevator::resetEmergencyInElevator(int ev)
+{
+    if(ev == -1 || ev == (id - 1))
+    {
+        state = Idle;
+        buttonsPressed.clear();
+        moveList.clear();
+        curGoal = 0;
+        emit emergencyOnBoard(curFloor, id);
+    }
 }

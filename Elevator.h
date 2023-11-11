@@ -32,6 +32,7 @@ public:
 
     void moveTofloor(int);
     void addPassengers(int);
+    void removePassengers(int);
     void resetEmergency();
 
 	int getId() const;
@@ -54,6 +55,7 @@ public slots:
     void pressButton(int flr);
     void helpButtonPressed();
     void emergency();
+    void resetEmergencyInElevator(int ev);
 
 private:
     static int ElevatorId;
@@ -61,7 +63,7 @@ private:
     const int numFloors;
     float openForSecs = TIME_ELEVATOR_OPEN;
 
-    bool emergencyStart = false;
+    bool emergencyFloorReached = false;
     bool callHelp = false;
     int helpCounter = 1;
 

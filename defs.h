@@ -7,8 +7,8 @@
 #define SCAN_REQUEST_TREE_SECS      2
 
 // DO NOT USE THESE anywhere other then as defaults for the elevator controller
-#define NUM_FLOORS					20
-#define NUM_ELEVATORS				8
+#define NUM_FLOORS					15
+#define NUM_ELEVATORS				6
 
 #define DEBUG_GENVALUES             false
 #define AGGRESSIVE_LOGGING          true

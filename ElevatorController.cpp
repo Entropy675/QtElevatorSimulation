@@ -34,6 +34,11 @@ ElevatorController::ElevatorController(Ui::MainWindow* u, int numElevators, int 
     connect(ui->pushPlaceButton, &QPushButton::clicked, this, &ElevatorController::buttonPlaceOnFloor);
     connect(ui->pushMoveButton, &QPushButton::clicked, this, &ElevatorController::buttonMoveToElevator);
     connect(ui->spinBoxMove, qOverload<int>(&QSpinBox::valueChanged), this, &ElevatorController::moveComboBoxChange);
+    connect(ui->pushAdd10FloorButton, &QPushButton::clicked, this, &ElevatorController::add10ToEachFloor);
+    connect(ui->pushBuildingEmergencyButton, &QPushButton::clicked, this, &ElevatorController::triggerBuildingEmergency);
+    connect(ui->spinBoxLeaveElevator, qOverload<int>(&QSpinBox::valueChanged), this, &ElevatorController::moveLeaveElevatorBoxChange);
+    connect(ui->pushEmergencyResetButton, &QPushButton::clicked, this, &ElevatorController::resetAllElevatorsEmergency);
+    connect(ui->pushLeaveButton, &QPushButton::clicked, this, &ElevatorController::buttonLeaveElevator);
 
     // keep in mind: "setWidget" and "setLayout" etc add to the ui tree, memory managed by Qt not Me :-)
 
@@ -84,6 +89,7 @@ ElevatorController::ElevatorController(Ui::MainWindow* u, int numElevators, int 
         elevators.push_back(ev);
         updateSelectedElevatorDisplays();
         // should be connecting slot in elevator to signals in elevator controller
+        connect(this, &ElevatorController::resetEmergency, ev, &Elevator::resetEmergencyInElevator);
         connect(this, &ElevatorController::sendRequestToElevator, ev, &Elevator::pressButton);
         connect(this, &ElevatorController::helpButton, ev, &Elevator::helpButtonPressed);
         connect(this, &ElevatorController::buildingEmergency, ev, &Elevator::emergency);
@@ -161,7 +167,7 @@ void ElevatorController::buttonPlaceOnFloor()
     const int flr = ui->comboFloorBox->currentText().remove(0, 7).toInt() - 1;
 
     floors[flr]->addPeople(ui->spinBoxPlace->value());
-    ui->passangerOnFloorNumber->display(floors[flr]->peopleOnFloor());
+    ui->passengerOnFloorNumber->display(floors[flr]->peopleOnFloor());
 
     ui->spinBoxPlace->setValue(0);
 }
@@ -172,7 +178,7 @@ void ElevatorController::buttonMoveToElevator()
     // So we need to call some func, that finds the
 
     const int flr = ui->comboFloorBox->currentText().remove(0, 7).toInt();
-    int evweak = ui->comboElevatorBox->currentText().remove(0, 10).toInt() - 1;
+    int evweak = ui->comboElevatorBox->currentText().remove(0, 10).toInt() - 1; // if this is on the same floor its used
 
     Elevator* availableEv = nullptr;
     Elevator* weakEv = nullptr;
@@ -203,12 +209,61 @@ void ElevatorController::buttonMoveToElevator()
     floors[flr - 1]->removePeople(val);
     availableEv->addPassengers(val);
 
-    // just set the box to the one that the people were put into... for visibility
-    qDebug() << "availableEv->getId() " << availableEv->getId();
+    // just set the combo box option to the one that people were put into automatically... for visibility
     ui->comboElevatorBox->setCurrentIndex(availableEv->getId() - 1);
+
     // update the floor on people display
-    ui->passangerOnFloorNumber->display(floors[flr - 1]->peopleOnFloor());
+    ui->passengerOnFloorNumber->display(floors[flr - 1]->peopleOnFloor());
     updateSelectedElevatorDisplays();
+}
+
+void ElevatorController::buttonLeaveElevator()
+{
+
+    int ev = ui->comboElevatorBox->currentText().remove(0, 10).toInt();
+    const int flr = elevators[ev - 1]->currentFloor() - 1;
+
+    qDebug() << "BUTTON: buttonLeaveElevator.... moving ppl EV: " << ev << " FLR: " << flr;
+
+
+    const int val = ui->spinBoxLeaveElevator->value(); //usr input
+    ui->spinBoxLeaveElevator->setValue(0);
+
+    elevators[ev - 1]->removePassengers(val);
+    floors[flr]->addPeople(val);
+
+    // just set the combo box option to the one that people were put into automatically... for visibility
+    ui->comboFloorBox->setCurrentIndex(flr);
+
+    // update the floor on people display
+    ui->passengerNumber->display(elevators[ev-1]->numPassengers());
+    ui->passengerOnFloorNumber->display(floors[flr]->peopleOnFloor());
+    updateSelectedElevatorDisplays();
+}
+
+
+void ElevatorController::add10ToEachFloor()
+{
+    qDebug() << "BUTTON add 10 To Each Floor.... spawning 10 ppl on each floor!";
+
+    for(Floor* f : floors)
+    {
+        f->addPeople(10);
+    }
+
+    const int flr = ui->comboFloorBox->currentText().remove(0, 7).toInt() - 1;
+    ui->passengerOnFloorNumber->display(floors[flr]->peopleOnFloor());
+    ui->spinBoxPlace->setValue(0);
+}
+
+void ElevatorController::triggerBuildingEmergency()
+{
+    emit buildingEmergency();
+}
+
+void ElevatorController::resetAllElevatorsEmergency()
+{
+    emit resetEmergency(-1);
 }
 
 void ElevatorController::controlMoveButtonActivated(Elevator* availableEv)
@@ -218,6 +273,7 @@ void ElevatorController::controlMoveButtonActivated(Elevator* availableEv)
     qDebug() << "BUTTON ACTIVATE: Activating/Deactivating the Move Button to allow moving ppl ";
 
     const int flr = ui->comboFloorBox->currentText().remove(0, 7).toInt();
+    const int evNum = ui->comboElevatorBox->currentText().remove(0, 10).toInt();
 
     for(Elevator* ev : elevators)
     {
@@ -226,6 +282,11 @@ void ElevatorController::controlMoveButtonActivated(Elevator* availableEv)
         if(ev->currentFloor() == flr && ev->currentState() == Elevator::DoorsOpen)
             availableEv = ev;
     }
+
+    if(elevators[evNum - 1]->currentFloor() == flr)
+        ui->pushLeaveButton->setEnabled(true);
+    else if(ui->pushLeaveButton->isEnabled())
+        ui->pushLeaveButton->setEnabled(false);
 
     if(availableEv != nullptr && flr == availableEv->currentFloor())
         ui->pushMoveButton->setEnabled(true);
@@ -239,8 +300,6 @@ void ElevatorController::elevatorSelected(int index)
 
     updateSelectedElevatorDisplays();
 
-    const int flr = ui->comboFloorBox->currentText().remove(0, 7).toInt();
-
     controlMoveButtonActivated(elevators[index]);
 
 
@@ -250,7 +309,7 @@ void ElevatorController::elevatorSelected(int index)
 void ElevatorController::floorSelected(int index)
 {
     // update the segment display for passangers
-    ui->passangerOnFloorNumber->display(floors[index]->peopleOnFloor());
+    ui->passengerOnFloorNumber->display(floors[index]->peopleOnFloor());
     qDebug()  << "COMBO BOX: Floor selected. Floor: " << index;
 
     ui->spinBoxMove->setValue(0); // wipe this since its different # ppl
@@ -259,9 +318,17 @@ void ElevatorController::floorSelected(int index)
 
 void ElevatorController::moveComboBoxChange(int index)
 {
-    if(index > ui->passangerOnFloorNumber->value())
+    if(index > ui->passengerOnFloorNumber->value())
     {
-        ui->spinBoxMove->setValue(ui->passangerOnFloorNumber->value());
+        ui->spinBoxMove->setValue(ui->passengerOnFloorNumber->value());
+    }
+}
+
+void ElevatorController::moveLeaveElevatorBoxChange(int index)
+{
+    if(index > ui->passengerNumber->value())
+    {
+        ui->spinBoxLeaveElevator->setValue(ui->passengerNumber->value());
     }
 }
 
@@ -291,16 +358,18 @@ void ElevatorController::elevatorFloorChanged(int floor, int ev, bool up)
 
                 QLabel* square = qobject_cast<QLabel*>(widget);
                 QLabel* squarePrev;
-                // modulo to get around these silly bounds
-                //  getVertex((i-1+ob.numVertices())%ob.numVertices());
-                //  getVertex((i+1)%ob.numVertices());
+
                 if(!up)
                     squarePrev = qobject_cast<QLabel*>(elevatorGridLayout->itemAtPosition((x - 1 + floors.size()) % floors.size(), y)->widget());
                 else
                     squarePrev = qobject_cast<QLabel*>(elevatorGridLayout->itemAtPosition((x + 1)%floors.size(), y)->widget());
 
                 squarePrev->setStyleSheet(QString("background-color: gray;"));
-                square->setStyleSheet("background-color: red;");
+
+                if(elevators[ev]->currentState() == Elevator::Emergency)
+                    square->setStyleSheet("background-color: yellow;");
+                else
+                    square->setStyleSheet("background-color: red;");
             }
             else
                 qDebug() << "Widget type: " << widgetType;
@@ -348,10 +417,16 @@ void ElevatorController::emergency(int flr, int ev)
 {
     // a door has closed
     qDebug()  << "EV signal: Elevator emergency!! Elevator: " << ev;
-    const int x = floors.size() - flr; // as the floors decrease, x increases (flr increase, x decrease)
-    const int y = ev;
-    QLabel* squarePrev = qobject_cast<QLabel*>(elevatorGridLayout->itemAtPosition(x, y)->widget());
-    squarePrev->setStyleSheet(QString("background-color: pink;"));
+
+    if(flr == 0)
+    {
+        QLabel* squarePrev = qobject_cast<QLabel*>(elevatorGridLayout->itemAtPosition(floors.size() - 1, ev)->widget());
+
+        if(elevators[ev - 1]->currentState() == Elevator::Idle)
+            squarePrev->setStyleSheet(QString("background-color: red;"));
+        else
+            squarePrev->setStyleSheet(QString("background-color: yellow;"));
+    }
 }
 
 // --- EV REQUEST FUNCS ---
@@ -404,6 +479,8 @@ void ElevatorController::handleFlrPressed(FloorDirection fd)
     {
         //int index = fd.time % foundList.size();
         //int index = (fd.time % 2) ? 0 : 1;
+        //for(int i = 0; i < index; i++)
+            //foundList.pop();
         foundList.top().ev->moveTofloor(fd.num);
     }
     else

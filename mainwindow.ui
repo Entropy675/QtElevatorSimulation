@@ -199,7 +199,7 @@
       <string>Total # of passangers on selected floor:</string>
      </property>
     </widget>
-    <widget class="QLCDNumber" name="passangerOnFloorNumber">
+    <widget class="QLCDNumber" name="passengerOnFloorNumber">
      <property name="geometry">
       <rect>
        <x>240</x>
@@ -303,7 +303,7 @@
       <string>Have</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton">
+    <widget class="QPushButton" name="pushLeaveButton">
      <property name="enabled">
       <bool>false</bool>
      </property>
@@ -317,6 +317,45 @@
      </property>
      <property name="text">
       <string>Leave!</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushAdd10FloorButton">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>290</y>
+       <width>311</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Add 10 People to Each Floor</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushBuildingEmergencyButton">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>320</y>
+       <width>311</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Trigger Building Emergency!</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushEmergencyResetButton">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>350</y>
+       <width>311</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Reset from Emergency</string>
      </property>
     </widget>
    </widget>

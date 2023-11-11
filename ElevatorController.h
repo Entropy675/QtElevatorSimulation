@@ -49,6 +49,7 @@ signals:
     void sendRequestToElevator(int ev, int flr);
     void helpButton(int elevatorId);
     void buildingEmergency();
+    void resetEmergency(int ev);
 
 public slots:
     // recieve signals from floors, relay to EVs
@@ -60,18 +61,24 @@ public slots:
     void doorOpened(int flr, int ev);
     void doorClosed(int flr, int ev);
     void overloaded(int flr, int ev);
-    void emergency(int floor, int ev);
+    void emergency(int flr, int ev);
+
 
 private slots:
     // buttons
     void buttonElevatorSubmit();
     void buttonPlaceOnFloor();
     void buttonMoveToElevator();
+    void buttonLeaveElevator();
+    void add10ToEachFloor();
+    void triggerBuildingEmergency();
+    void resetAllElevatorsEmergency();
 
     // select boxes
     void elevatorSelected(int index);
     void floorSelected(int index);
     void moveComboBoxChange(int index);
+    void moveLeaveElevatorBoxChange(int index);
 
     // constant scan on timer
     void scanRequestTree();
