@@ -19,10 +19,9 @@ Elevator::Elevator(int n)
         }
     }
 
-
     elevatorUpdateTimer = new QTimer(this);
     connect(elevatorUpdateTimer, &QTimer::timeout, this, &Elevator::updateElevator);
-    elevatorUpdateTimer->start(1000); // Emit the signal every 1000 milliseconds (1 second)
+    elevatorUpdateTimer->start(500); // Emit the signal every 1000 milliseconds (1 second)
 
 }
 
@@ -102,8 +101,6 @@ void Elevator::updateElevator()
 {
     if(AGGRESSIVE_LOGGING)
     {
-        //qDebug() << "Elevator Update " << id << " - TIME: "  << std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now() - std::chrono::system_clock::time_point()).count();
-
         std::string s = " EV nums: ";
         for(int i : moveList)
             s += std::to_string(i) + " ";
@@ -255,7 +252,11 @@ void Elevator::updateElevator()
         break;
     case Emergency:
 
-        emit emergencyOnBoard(curFloor, id);
+        if(!emergencyFloorReached)
+        {
+            emit emergencyOnBoard(curFloor, id);
+            emergencyFloorReached = true;
+        }
 
 
         if(curFloor != 0)
@@ -263,9 +264,6 @@ void Elevator::updateElevator()
             curFloor -= 1;
             emit floorChanged(curFloor, id - 1, false);
         }
-
-
-        QThread::msleep(100);
 
         break;
     }
@@ -293,7 +291,11 @@ void Elevator::emergency()
 {
     // go to floor 0 after doors close
     // Emergency request from external sources reached
-    qDebug() << "!!! Emergency signal recieved: Elevator " << id;
+    qDebug() << "!!! Pass 1          : Emergency signal recieved: Elevator " << id;
+    if(state == Emergency)
+        return;
+
+    qDebug() << "!!! Pass 2 (Success): Emergency signal recieved: Elevator " << id;
     if(state != Idle)
     {
         state = DoorsClosing;
@@ -313,6 +315,7 @@ void Elevator::resetEmergencyInElevator(int ev)
         buttonsPressed.clear();
         moveList.clear();
         curGoal = 0;
+        emergencyFloorReached = false;
         emit emergencyOnBoard(curFloor, id);
     }
 }

@@ -107,7 +107,7 @@ ElevatorController::ElevatorController(Ui::MainWindow* u, int numElevators, int 
 
     requestScanTimer = new QTimer(this);
     connect(requestScanTimer, &QTimer::timeout, this, &ElevatorController::scanRequestTree);
-    requestScanTimer->start(SCAN_REQUEST_TREE_SECS * 1000);  // Scan backup request tree every 15 seconds, in case overflow
+    requestScanTimer->start(SCAN_REQUEST_TREE_SECS);  // Scan backup request tree every 15 seconds, in case overflow
 
     qDebug() << "Elevator Controller Initialized";
 }
@@ -264,6 +264,7 @@ void ElevatorController::triggerBuildingEmergency()
 void ElevatorController::resetAllElevatorsEmergency()
 {
     emit resetEmergency(-1);
+    updateSelectedElevatorDisplays();
 }
 
 void ElevatorController::controlMoveButtonActivated(Elevator* availableEv)
@@ -343,7 +344,7 @@ void ElevatorController::elevatorFloorChanged(int floor, int ev, bool up)
     const int x = floors.size() - floor; // as the floors decrease, x increases (flr increase, x decrease)
     const int y = ev + 1;
     QLayoutItem* layoutItem = elevatorGridLayout->itemAtPosition(x, y); // check if we are looking at a valid ev
-    //QLabel* square = qobject_cast<QLabel*>(elevatorGridLayout->itemAtPosition(x, y)->widget());
+
     if (layoutItem)
     {
         QWidget* widget = layoutItem->widget();
@@ -387,7 +388,18 @@ void ElevatorController::doorOpened(int flr, int ev)
     qDebug()  << "EV signal: Door opened! Elevator: " << ev;
     const int x = floors.size() - flr; // as the floors decrease, x increases (flr increase, x decrease)
     const int y = ev;
-    QLabel* squarePrev = qobject_cast<QLabel*>(elevatorGridLayout->itemAtPosition(x, y)->widget());
+    if (!elevatorGridLayout->itemAtPosition(x, y))
+    {
+        qDebug()  << "doorClosed(): No Item at position:  (" << x << ", " << y <<  ")";
+        return;
+    }
+    QWidget* wdg = elevatorGridLayout->itemAtPosition(x, y)->widget();
+    if(QString::fromUtf8(wdg->metaObject()->className()) != "QLabel")
+    {
+        qDebug()  << "doorClosed(): Item at position:  (" << x << ", " << y <<  ") " << "is a: " << QString::fromUtf8(wdg->metaObject()->className());
+        return;
+    }
+    QLabel* squarePrev = qobject_cast<QLabel*>(wdg);
     squarePrev->setStyleSheet(QString("background-color: green;"));
     controlMoveButtonActivated(elevators[ev - 1]);
     updateSelectedElevatorDisplays();
@@ -399,7 +411,19 @@ void ElevatorController::doorClosed(int flr, int ev)
     qDebug()  << "EV signal: Door closed!! Elevator: " << ev;
     const int x = floors.size() - flr; // as the floors decrease, x increases (flr increase, x decrease)
     const int y = ev;
-    QLabel* squarePrev = qobject_cast<QLabel*>(elevatorGridLayout->itemAtPosition(x, y)->widget());
+
+    if (!elevatorGridLayout->itemAtPosition(x, y))
+    {
+        qDebug()  << "doorClosed(): No Item at position:  (" << x << ", " << y <<  ")";
+        return;
+    }
+    QWidget* wdg = elevatorGridLayout->itemAtPosition(x, y)->widget();
+    if(QString::fromUtf8(wdg->metaObject()->className()) != "QLabel")
+    {
+        qDebug()  << "doorClosed(): Item at position:  (" << x << ", " << y <<  ") " << "is a: " << QString::fromUtf8(wdg->metaObject()->className());
+        return;
+    }
+    QLabel* squarePrev = qobject_cast<QLabel*>(wdg);
     squarePrev->setStyleSheet(QString("background-color: purple;"));
 }
 
@@ -409,7 +433,18 @@ void ElevatorController::overloaded(int flr, int ev)
     qDebug()  << "EV signal: Elevator overloaded!! Elevator: " << ev;
     const int x = floors.size() - flr; // as the floors decrease, x increases (flr increase, x decrease)
     const int y = ev;
-    QLabel* squarePrev = qobject_cast<QLabel*>(elevatorGridLayout->itemAtPosition(x, y)->widget());
+    if (!elevatorGridLayout->itemAtPosition(x, y))
+    {
+        qDebug()  << "doorClosed(): No Item at position:  (" << x << ", " << y <<  ")";
+        return;
+    }
+    QWidget* wdg = elevatorGridLayout->itemAtPosition(x, y)->widget();
+    if(QString::fromUtf8(wdg->metaObject()->className()) != "QLabel")
+    {
+        qDebug()  << "doorClosed(): Item at position:  (" << x << ", " << y <<  ") " << "is a: " << QString::fromUtf8(wdg->metaObject()->className());
+        return;
+    }
+    QLabel* squarePrev = qobject_cast<QLabel*>(wdg);
     squarePrev->setStyleSheet(QString("background-color: orange;"));
 }
 
@@ -420,12 +455,33 @@ void ElevatorController::emergency(int flr, int ev)
 
     if(flr == 0)
     {
-        QLabel* squarePrev = qobject_cast<QLabel*>(elevatorGridLayout->itemAtPosition(floors.size() - 1, ev)->widget());
+        QLayoutItem* layoutItem = elevatorGridLayout->itemAtPosition(floors.size() - 1, ev); // check if we are looking at a valid ev
 
-        if(elevators[ev - 1]->currentState() == Elevator::Idle)
-            squarePrev->setStyleSheet(QString("background-color: red;"));
-        else
-            squarePrev->setStyleSheet(QString("background-color: yellow;"));
+        if (layoutItem)
+        {
+            QWidget* widget = layoutItem->widget();
+
+            if (widget)
+            {
+                const QMetaObject* metaObject = widget->metaObject();
+                QString widgetType = QString::fromUtf8(metaObject->className());
+                if (widgetType == "QLabel")
+                {
+
+                    QLabel* square = qobject_cast<QLabel*>(widget);
+
+                    if(elevators[ev - 1]->currentState() == Elevator::Idle)
+                        square->setStyleSheet(QString("background-color: red;"));
+                    else
+                        square->setStyleSheet(QString("background-color: yellow;"));
+                }
+                else
+                    qDebug() << "Widget type: " << widgetType;
+            }
+            else
+                qDebug() << "No widget at this position.";
+        } else
+            qDebug() << "No layout item at this position.";
     }
 }
 
@@ -490,11 +546,10 @@ void ElevatorController::handleFlrPressed(FloorDirection fd)
 void ElevatorController::scanRequestTree()
 {
     // happen on a timer, scan request tree realloc elevators if free
-    if(AGGRESSIVE_LOGGING)
-        qDebug() << "scanRequestTree pings "; // << i++;
+    if(AGGRESSIVE_LOGGING && !earliestRequestTree.empty())
+        qDebug() << "scanRequestTree-> Request floor:  " << earliestRequestTree.top().num << " up: " << earliestRequestTree.top().up; // << i++;
     if (earliestRequestTree.empty())
     {
-        qDebug() << "No requests in the scanRequestTree priority queue.";
         return;
     }
 

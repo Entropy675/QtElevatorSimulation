@@ -8,9 +8,6 @@
 #include <vector>
 #include <set>
 
-// connect with something like:
-// QObject::connect(&elevator, SIGNAL(doorOpened()), &passenger, SLOT(openDoor()));
-
 class Elevator : public QObject
 {
 	Q_OBJECT

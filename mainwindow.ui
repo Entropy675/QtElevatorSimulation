@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1120</width>
-    <height>777</height>
+    <width>1140</width>
+    <height>829</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,8 +19,8 @@
      <rect>
       <x>780</x>
       <y>0</y>
-      <width>331</width>
-      <height>731</height>
+      <width>351</width>
+      <height>781</height>
      </rect>
     </property>
     <property name="title">
@@ -29,7 +29,7 @@
     <widget class="QComboBox" name="comboElevatorBox">
      <property name="geometry">
       <rect>
-       <x>10</x>
+       <x>20</x>
        <y>50</y>
        <width>141</width>
        <height>21</height>
@@ -39,7 +39,7 @@
     <widget class="QLabel" name="label_1">
      <property name="geometry">
       <rect>
-       <x>10</x>
+       <x>20</x>
        <y>30</y>
        <width>141</width>
        <height>16</height>
@@ -52,8 +52,8 @@
     <widget class="QTextBrowser" name="textBrowserButtonsPressed">
      <property name="geometry">
       <rect>
-       <x>160</x>
-       <y>90</y>
+       <x>170</x>
+       <y>50</y>
        <width>161</width>
        <height>71</height>
       </rect>
@@ -62,8 +62,8 @@
     <widget class="QComboBox" name="comboFloorBox">
      <property name="geometry">
       <rect>
-       <x>10</x>
-       <y>100</y>
+       <x>20</x>
+       <y>200</y>
        <width>141</width>
        <height>21</height>
       </rect>
@@ -72,8 +72,8 @@
     <widget class="QLabel" name="label_2">
      <property name="geometry">
       <rect>
-       <x>10</x>
-       <y>80</y>
+       <x>20</x>
+       <y>180</y>
        <width>141</width>
        <height>16</height>
       </rect>
@@ -85,8 +85,8 @@
     <widget class="QLabel" name="label_3">
      <property name="geometry">
       <rect>
-       <x>160</x>
-       <y>70</y>
+       <x>170</x>
+       <y>30</y>
        <width>161</width>
        <height>16</height>
       </rect>
@@ -95,24 +95,11 @@
       <string>Buttons activated on elevator:</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushElevatorButton">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>130</y>
-       <width>141</width>
-       <height>31</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Press Elevator Button</string>
-     </property>
-    </widget>
     <widget class="QLCDNumber" name="passengerNumber">
      <property name="geometry">
       <rect>
-       <x>240</x>
-       <y>40</y>
+       <x>50</x>
+       <y>100</y>
        <width>81</width>
        <height>23</height>
       </rect>
@@ -127,8 +114,8 @@
     <widget class="QLabel" name="label_4">
      <property name="geometry">
       <rect>
-       <x>160</x>
-       <y>40</y>
+       <x>50</x>
+       <y>80</y>
        <width>81</width>
        <height>21</height>
       </rect>
@@ -140,8 +127,8 @@
     <widget class="QSpinBox" name="spinBoxPlace">
      <property name="geometry">
       <rect>
-       <x>50</x>
-       <y>200</y>
+       <x>60</x>
+       <y>350</y>
        <width>41</width>
        <height>25</height>
       </rect>
@@ -150,8 +137,8 @@
     <widget class="QLabel" name="label">
      <property name="geometry">
       <rect>
-       <x>10</x>
-       <y>200</y>
+       <x>20</x>
+       <y>350</y>
        <width>31</width>
        <height>20</height>
       </rect>
@@ -163,8 +150,8 @@
     <widget class="QLabel" name="label_5">
      <property name="geometry">
       <rect>
-       <x>100</x>
-       <y>200</y>
+       <x>110</x>
+       <y>350</y>
        <width>111</width>
        <height>20</height>
       </rect>
@@ -176,8 +163,8 @@
     <widget class="QPushButton" name="pushPlaceButton">
      <property name="geometry">
       <rect>
-       <x>250</x>
-       <y>200</y>
+       <x>260</x>
+       <y>350</y>
        <width>71</width>
        <height>24</height>
       </rect>
@@ -189,21 +176,21 @@
     <widget class="QLabel" name="label_6">
      <property name="geometry">
       <rect>
-       <x>10</x>
-       <y>170</y>
-       <width>221</width>
+       <x>40</x>
+       <y>230</y>
+       <width>111</width>
        <height>20</height>
       </rect>
      </property>
      <property name="text">
-      <string>Total # of passangers on selected floor:</string>
+      <string>Floor #Passengers:</string>
      </property>
     </widget>
     <widget class="QLCDNumber" name="passengerOnFloorNumber">
      <property name="geometry">
       <rect>
-       <x>240</x>
-       <y>170</y>
+       <x>50</x>
+       <y>250</y>
        <width>81</width>
        <height>23</height>
       </rect>
@@ -218,9 +205,9 @@
     <widget class="QLabel" name="label_7">
      <property name="geometry">
       <rect>
-       <x>10</x>
-       <y>230</y>
-       <width>49</width>
+       <x>20</x>
+       <y>290</y>
+       <width>41</width>
        <height>21</height>
       </rect>
      </property>
@@ -231,8 +218,8 @@
     <widget class="QSpinBox" name="spinBoxMove">
      <property name="geometry">
       <rect>
-       <x>50</x>
-       <y>230</y>
+       <x>60</x>
+       <y>290</y>
        <width>41</width>
        <height>25</height>
       </rect>
@@ -241,8 +228,8 @@
     <widget class="QLabel" name="label_8">
      <property name="geometry">
       <rect>
-       <x>100</x>
-       <y>230</y>
+       <x>110</x>
+       <y>290</y>
        <width>141</width>
        <height>20</height>
       </rect>
@@ -257,8 +244,8 @@
      </property>
      <property name="geometry">
       <rect>
-       <x>250</x>
-       <y>230</y>
+       <x>260</x>
+       <y>290</y>
        <width>71</width>
        <height>24</height>
       </rect>
@@ -270,8 +257,8 @@
     <widget class="QLabel" name="label_9">
      <property name="geometry">
       <rect>
-       <x>100</x>
-       <y>260</y>
+       <x>110</x>
+       <y>140</y>
        <width>141</width>
        <height>21</height>
       </rect>
@@ -283,8 +270,8 @@
     <widget class="QSpinBox" name="spinBoxLeaveElevator">
      <property name="geometry">
       <rect>
-       <x>50</x>
-       <y>260</y>
+       <x>60</x>
+       <y>140</y>
        <width>41</width>
        <height>25</height>
       </rect>
@@ -293,8 +280,8 @@
     <widget class="QLabel" name="label_10">
      <property name="geometry">
       <rect>
-       <x>10</x>
-       <y>260</y>
+       <x>20</x>
+       <y>140</y>
        <width>31</width>
        <height>21</height>
       </rect>
@@ -309,8 +296,8 @@
      </property>
      <property name="geometry">
       <rect>
-       <x>250</x>
-       <y>260</y>
+       <x>260</x>
+       <y>140</y>
        <width>71</width>
        <height>24</height>
       </rect>
@@ -322,8 +309,8 @@
     <widget class="QPushButton" name="pushAdd10FloorButton">
      <property name="geometry">
       <rect>
-       <x>10</x>
-       <y>290</y>
+       <x>20</x>
+       <y>380</y>
        <width>311</width>
        <height>31</height>
       </rect>
@@ -335,8 +322,8 @@
     <widget class="QPushButton" name="pushBuildingEmergencyButton">
      <property name="geometry">
       <rect>
-       <x>10</x>
-       <y>320</y>
+       <x>20</x>
+       <y>420</y>
        <width>311</width>
        <height>31</height>
       </rect>
@@ -348,8 +335,8 @@
     <widget class="QPushButton" name="pushEmergencyResetButton">
      <property name="geometry">
       <rect>
-       <x>10</x>
-       <y>350</y>
+       <x>20</x>
+       <y>460</y>
        <width>311</width>
        <height>31</height>
       </rect>
@@ -358,6 +345,32 @@
       <string>Reset from Emergency</string>
      </property>
     </widget>
+    <widget class="QGroupBox" name="groupBox">
+     <property name="geometry">
+      <rect>
+       <x>180</x>
+       <y>200</y>
+       <width>151</width>
+       <height>71</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string/>
+     </property>
+     <widget class="QPushButton" name="pushElevatorButton">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>20</y>
+        <width>131</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Press Elevator Button</string>
+      </property>
+     </widget>
+    </widget>
    </widget>
    <widget class="QScrollArea" name="elevatorScrollArea">
     <property name="geometry">
@@ -365,7 +378,7 @@
       <x>10</x>
       <y>10</y>
       <width>761</width>
-      <height>721</height>
+      <height>771</height>
      </rect>
     </property>
     <property name="widgetResizable">
@@ -377,7 +390,7 @@
        <x>0</x>
        <y>0</y>
        <width>759</width>
-       <height>719</height>
+       <height>769</height>
       </rect>
      </property>
     </widget>
@@ -388,7 +401,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1120</width>
+     <width>1140</width>
      <height>21</height>
     </rect>
    </property>
