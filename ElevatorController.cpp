@@ -59,7 +59,7 @@ ElevatorController::ElevatorController(Ui::MainWindow* u, int numElevators, int 
             // Create a QLabel for each position
             QLabel* cube = new QLabel;
             cube->setText(" ");
-            cube->setFixedSize(64, 64);
+            cube->setFixedSize(CUBE_SIZE, CUBE_SIZE);
             QString color = "gray";
 
             if(numFloors - floor - 1 == 0) // all ev's start at 0
@@ -503,42 +503,29 @@ void ElevatorController::buttonPressedDown(int floor)
 
 void ElevatorController::handleFlrPressed(FloorDirection fd)
 {
-    struct BestElevator
-    {
-        Elevator* ev;
-        int cEvMoves = 0;
+    // maybe this had some use in some implementtation? ev->getNumFloorsReserved();
 
-        BestElevator(Elevator* e)
-        {
-            ev = e;
-            cEvMoves = ev->getNumFloorsReserved();
-        }
-
-        bool operator<(const BestElevator& o) const
-        {
-            return this->cEvMoves < o.cEvMoves;
-        }
-    };
-
-    std::priority_queue<BestElevator> foundList;
+    Elevator* bestElevator = nullptr;
     for(Elevator* pEv : elevators)
     {
-        bool addpEv = (pEv->currentState() == Elevator::Idle)
-        || (pEv->currentState() == Elevator::MovingUp && fd.up && pEv->currentFloor() < fd.num )
-        || (pEv->currentState() == Elevator::MovingDown && !fd.up && pEv->currentFloor() > fd.num);
+        if(pEv->currentState() == Elevator::MovingUp && fd.up && pEv->currentFloor() < fd.num )
+        {
+            bestElevator = pEv;
+            break;
+        }
 
-        if(addpEv)
-            foundList.push(BestElevator(pEv));
+        if(pEv->currentState() == Elevator::MovingDown && !fd.up && pEv->currentFloor() > fd.num)
+        {
+            bestElevator = pEv;
+            break;
+        }
+
+        if(pEv->currentState() == Elevator::Idle)
+            bestElevator = pEv;
     }
 
-    if(foundList.size() > 0)
-    {
-        //int index = fd.time % foundList.size();
-        //int index = (fd.time % 2) ? 0 : 1;
-        //for(int i = 0; i < index; i++)
-            //foundList.pop();
-        foundList.top().ev->moveTofloor(fd.num);
-    }
+    if(bestElevator)
+        bestElevator->moveTofloor(fd.num);
     else
         earliestRequestTree.push(fd);
 }

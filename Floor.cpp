@@ -9,8 +9,11 @@ Floor::Floor(int fn, QWidget *parent) : floorNum(fn), QGroupBox(parent)
     this->setLayout(groupLayout);
     this->setFixedWidth(100);
 
-    upButton = new QPushButton(QString("↑ F%1 ↑").arg(fn), this);
-    downButton = new QPushButton(QString("↓ F%1 ↓").arg(fn), this);
+    this->setFixedSize(BUTTON_SCALE*2, BUTTON_SCALE*3);
+    upButton = new QPushButton(QString("↑↑"), this);
+    upButton->setFixedSize(BUTTON_SCALE, BUTTON_SCALE);
+    downButton = new QPushButton(QString("↓↓"), this); //  new QPushButton(QString("↓ F%1 ↓").arg(fn), this);
+    downButton->setFixedSize(BUTTON_SCALE, BUTTON_SCALE);
 
     groupLayout->addWidget(upButton);
     groupLayout->addWidget(downButton);
