@@ -48,7 +48,7 @@ public:
 signals:
     void sendRequestToElevator(int ev, int flr);
     void helpButton(int elevatorId);
-    void emergency();
+    void buildingEmergency();
 
 public slots:
     // recieve signals from floors, relay to EVs
@@ -86,15 +86,16 @@ private:
     // this list should be periodically checked and if there are any values
     // and available elevators, pop from the root and work all the values out
 
-    void controlMoveButtonActivated();
-    void updateButtonsPressedText(int elev);
-    void handleFlrPressed(int floor, bool up);
+    void controlMoveButtonActivated(Elevator* availableEv = nullptr);
+    void updateSelectedElevatorDisplays();
+    void handleFlrPressed(FloorDirection);
 
     // timers
     QTimer* requestScanTimer;
 
     // ui elements
     Ui::MainWindow* ui;
+    QGridLayout* elevatorGridLayout;
 };
 
 

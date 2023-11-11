@@ -35,6 +35,7 @@ public:
     void resetEmergency();
 
 	int getId() const;
+    int getNumFloorsReserved() const;
 	int currentFloor() const;
     int numPassengers() const;
     bool isButtonPressed(int) const;
@@ -46,7 +47,7 @@ signals:
     void doorOpened(int floor, int ev); // sends its own id so that controller knows
     void doorClosed(int floor, int ev);
     void overloaded(int floor, int ev);
-    void emergency(int floor, int ev);
+    void emergencyOnBoard(int floor, int ev);
 
 public slots:
     void updateElevator();

@@ -44,7 +44,10 @@ void Floor::addPeople(int n)
 bool Floor::removePeople(int n)
 {
     if((numPeople - n) < 0)
+    {
+        numPeople = 0;
         return false;
+    }
 
     numPeople -= n;
     return true;

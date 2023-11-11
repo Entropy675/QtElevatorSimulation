@@ -32,13 +32,77 @@ Elevator::~Elevator()
     delete elevatorUpdateTimer;
 }
 
+void Elevator::moveTofloor(int f)
+{
+    // check curGoal first then
+    if(curGoal == 0)
+        curGoal = f;
+    else
+        moveList.insert(f);
+}
+
+void Elevator::addPassengers(int x)
+{
+    passengers += x;
+}
+
+void Elevator::resetEmergency()
+{
+
+    qDebug() << id << ": Resetting from emergency...";
+    emergencyStart = false;
+    state = Idle;
+}
+
+int Elevator::getId() const
+{
+    return id;
+}
+int Elevator::getNumFloorsReserved() const
+{
+    return moveList.size();
+}
+
+int Elevator::currentFloor() const
+{
+    return curFloor;
+}
+
+int Elevator::numPassengers() const
+{
+    return passengers;
+}
+
+bool Elevator::isButtonPressed(int b) const
+{
+    for(int i : buttonsPressed)
+        if(i == b)
+            return true;
+    return false;
+}
+
+const std::set<int>& Elevator::getButtonsPressed() const
+{
+    return buttonsPressed;
+}
+
+const Elevator::ElevatorState& Elevator::currentState() const
+{
+    return state;
+}
+
 // Happens every second - for each floor update
 void Elevator::updateElevator()
 {
     if(AGGRESSIVE_LOGGING)
-        qDebug() << "Elevator Update " << id << " - TIME: "  << std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now() - std::chrono::system_clock::time_point()).count();
+    {
+        //qDebug() << "Elevator Update " << id << " - TIME: "  << std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now() - std::chrono::system_clock::time_point()).count();
 
-    qDebug() << id << " EV state: " << state << " curr goal: " << curGoal << " cur floor: " << curFloor;
+        std::string s = " EV nums: ";
+        for(int i : moveList)
+            s += std::to_string(i) + " ";
+        qDebug() << id << " EV state: " << state << " curr goal: " << curGoal << " cur floor: " << curFloor << s;
+    }
 
     if(callHelp)
     {
@@ -62,6 +126,17 @@ void Elevator::updateElevator()
             qDebug() << "movelistsize trigger ev: " << id << " size: " << moveList.size();
         }
 
+        if(curGoal == curFloor)
+        {
+            if(moveList.count(curFloor) > 0)
+            {
+                state = DoorsOpen;
+                return;
+            }
+            curGoal = 0;
+        }
+
+
         if(curGoal != curFloor)
         {
             if(curGoal > curFloor)
@@ -83,6 +158,7 @@ void Elevator::updateElevator()
         if(moveList.count(curFloor) > 0)
         {
             state = DoorsOpen;
+            return;
         }
 
         if(curGoal == curFloor)
@@ -92,7 +168,14 @@ void Elevator::updateElevator()
                 curGoal = *moveList.rend();
             else
                 curGoal = 0;
+            return;
         }
+
+        if(curGoal > curFloor)
+            state = MovingUp;
+
+        if(curGoal < curFloor)
+            state = MovingDown;
 
         break;
     case MovingDown:
@@ -103,6 +186,7 @@ void Elevator::updateElevator()
         if(moveList.count(curFloor) > 0)
         {
             state = DoorsOpen;
+            return;
         }
 
         if(curGoal == curFloor)
@@ -118,17 +202,29 @@ void Elevator::updateElevator()
                 curGoal = *moveList.rbegin();
             else
                 curGoal = 0;
+            return;
         }
+
+        if(curGoal > curFloor)
+            state = MovingUp;
+
+        if(curGoal < curFloor)
+            state = MovingDown;
 
         break;
     case DoorsOpen:
 
         emit doorOpened(curFloor, id);
-        //moveList.erase(curFloor);
-        //buttonsPressed.erase(curFloor);
+        moveList.erase(curFloor);
+        buttonsPressed.erase(curFloor);
 
         QThread::msleep(TIME_ELEVATOR_OPEN*1000);
 
+        if(passengers >= ELEVATOR_PEOPLE_LIMIT)
+        {
+            state = Overload;
+            return;
+        }
         state = DoorsClosing;
 
         break;
@@ -142,11 +238,11 @@ void Elevator::updateElevator()
 
         break;
     case Overload:
-
         emit overloaded(curFloor, id);
 
         if(passengers < ELEVATOR_PEOPLE_LIMIT)
         {
+            qDebug() << "EV: " << id << " ... A loud beeping noise is played as an overloaded elevator's doors close ... ";
             state = DoorsClosing;
         }
 
@@ -156,7 +252,7 @@ void Elevator::updateElevator()
         if(!emergencyStart)
         {
             emergencyStart = true;
-            emit emergency(curFloor, id);
+            emit emergencyOnBoard(curFloor, id);
         }
 
         if(curFloor != 0)
@@ -194,54 +290,4 @@ void Elevator::emergency()
     qDebug() << "!!! Emergency signal recieved: Elevator " << id;
 
     state = Emergency;
-}
-
-void Elevator::resetEmergency()
-{
-
-    qDebug() << id << ": Resetting from emergency...";
-    emergencyStart = false;
-    state = Idle;
-}
-
-bool Elevator::isButtonPressed(int b) const
-{
-    for(int i : buttonsPressed)
-        if(i == b)
-            return true;
-    return false;
-}
-
-void Elevator::moveTofloor(int f)
-{
-    // check curGoal first then
-    if(curGoal == 0)
-        curGoal = f;
-    else
-        moveList.insert(f);
-}
-
-int Elevator::getId() const
-{
-    return id;
-}
-
-int Elevator::currentFloor() const
-{
-    return curFloor;
-}
-
-int Elevator::numPassengers() const
-{
-    return passengers;
-}
-
-const std::set<int>& Elevator::getButtonsPressed() const
-{
-    return buttonsPressed;
-}
-
-const Elevator::ElevatorState& Elevator::currentState() const
-{
-    return state;
 }
