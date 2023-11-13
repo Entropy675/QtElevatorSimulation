@@ -16,6 +16,12 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+signals:
+    void screenResized(int width, int height);
+
+protected:
+    void resizeEvent(QResizeEvent* event) override;
+
 private:
     Ui::MainWindow *ui;
     ElevatorController* ec;

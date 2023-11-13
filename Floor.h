@@ -16,9 +16,9 @@ public:
 
     int peopleOnFloor();
     void addPeople(int);
-    bool removePeople(int); // returns true for success (cant be < 0)
+    void removePeople(int); // returns true for success (cant be < 0)
 
-signals: // delegates to controller... emit to controller?
+signals: // delegates to controller...
     void upButtonPressed(int floor);
     void downButtonPressed(int floor);
 

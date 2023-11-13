@@ -7,7 +7,7 @@ Floor::Floor(int fn, QWidget *parent) : floorNum(fn), QGroupBox(parent)
 
     groupLayout = new QGridLayout;
     this->setLayout(groupLayout);
-    this->setFixedWidth(100);
+    this->setFixedWidth(200);
 
     this->setFixedSize(BUTTON_SCALE*2, BUTTON_SCALE*3);
     upButton = new QPushButton(QString("↑↑"), this);
@@ -20,11 +20,6 @@ Floor::Floor(int fn, QWidget *parent) : floorNum(fn), QGroupBox(parent)
 
     connect(upButton, &QPushButton::clicked, this, &Floor::handleUpButtonPress);
     connect(downButton, &QPushButton::clicked, this, &Floor::handleDownButtonPress);
-
-    if(DEBUG_GENVALUES)
-    {
-        numPeople = fn + 1;
-    }
 }
 
 Floor::~Floor()
@@ -44,16 +39,12 @@ void Floor::addPeople(int n)
     numPeople += n;
 }
 
-bool Floor::removePeople(int n)
+void Floor::removePeople(int n)
 {
     if((numPeople - n) < 0)
-    {
         numPeople = 0;
-        return false;
-    }
-
-    numPeople -= n;
-    return true;
+    else
+        numPeople -= n;
 }
 
 void Floor::handleUpButtonPress()

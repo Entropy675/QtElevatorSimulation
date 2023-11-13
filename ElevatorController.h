@@ -43,12 +43,17 @@ class ElevatorController : public QObject
 	
 public:
     ElevatorController(Ui::MainWindow* ui, int numElevators = NUM_ELEVATORS, int numFloors = NUM_FLOORS);
-	~ElevatorController(); // clean up floors
+    ~ElevatorController(); // clean up floors
 
 signals:
+    void pressButton(int ev, int fb);
+    void unpressButton(int ev, int fb);
+    void addElevatorPassengers(int ev, int flr, int num);
+    void removeElevatorPassengers(int ev, int flr, int num);
+    void moveElevatorToFloor(int ev, int flr);
     void sendRequestToElevator(int ev, int flr);
     void helpButton(int elevatorId);
-    void buildingEmergency();
+    void buildingEmergency(int ev);
     void resetEmergency(int ev);
 
 public slots:
@@ -60,13 +65,17 @@ public slots:
     void elevatorFloorChanged(int floor, int ev, bool up);
     void doorOpened(int flr, int ev);
     void doorClosed(int flr, int ev);
+    void doorBlocked(int flr, int ev);
     void overloaded(int flr, int ev);
     void emergency(int flr, int ev);
 
+    // for rescaling the elevator box...
+    void handleScreenResized(int w, int h);
 
 private slots:
     // buttons
     void buttonElevatorSubmit();
+    void buttonElevatorHelp();
     void buttonPlaceOnFloor();
     void buttonMoveToElevator();
     void buttonLeaveElevator();
@@ -83,6 +92,10 @@ private slots:
     // constant scan on timer
     void scanRequestTree();
 
+    // update displays for ev changes...
+    void updateDisplays();
+
+
 private:
     std::vector<Floor*> floors;
     std::vector<Elevator*> elevators;
@@ -94,15 +107,17 @@ private:
     // and available elevators, pop from the root and work all the values out
 
     void controlMoveButtonActivated(Elevator* availableEv = nullptr);
-    void updateSelectedElevatorDisplays();
     void handleFlrPressed(FloorDirection);
+
+    bool initialResize = true;
+    int widthOfInputConst;
 
     // timers
     QTimer* requestScanTimer;
 
     // ui elements
     Ui::MainWindow* ui;
-    QGridLayout* elevatorGridLayout;
+    QGridLayout* elevatorGridLayout; // we generate this
 };
 
 

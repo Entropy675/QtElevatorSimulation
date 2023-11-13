@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1140</width>
-    <height>829</height>
+    <width>881</width>
+    <height>655</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,358 +17,458 @@
    <widget class="QGroupBox" name="InputTerminal">
     <property name="geometry">
      <rect>
-      <x>780</x>
+      <x>520</x>
       <y>0</y>
       <width>351</width>
-      <height>781</height>
+      <height>611</height>
      </rect>
     </property>
     <property name="title">
      <string>Input Terminal</string>
     </property>
-    <widget class="QComboBox" name="comboElevatorBox">
+    <widget class="QGroupBox" name="groupBox_2">
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>50</y>
-       <width>141</width>
-       <height>21</height>
-      </rect>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_1">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>30</y>
-       <width>141</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Select an Elevator:</string>
-     </property>
-    </widget>
-    <widget class="QTextBrowser" name="textBrowserButtonsPressed">
-     <property name="geometry">
-      <rect>
-       <x>170</x>
-       <y>50</y>
-       <width>161</width>
-       <height>71</height>
-      </rect>
-     </property>
-    </widget>
-    <widget class="QComboBox" name="comboFloorBox">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>200</y>
-       <width>141</width>
-       <height>21</height>
-      </rect>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_2">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>180</y>
-       <width>141</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Select a floor:</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_3">
-     <property name="geometry">
-      <rect>
-       <x>170</x>
-       <y>30</y>
-       <width>161</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Buttons activated on elevator:</string>
-     </property>
-    </widget>
-    <widget class="QLCDNumber" name="passengerNumber">
-     <property name="geometry">
-      <rect>
-       <x>50</x>
-       <y>100</y>
-       <width>81</width>
-       <height>23</height>
-      </rect>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Plain</enum>
-     </property>
-     <property name="segmentStyle">
-      <enum>QLCDNumber::Flat</enum>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_4">
-     <property name="geometry">
-      <rect>
-       <x>50</x>
-       <y>80</y>
-       <width>81</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string># Passengers:</string>
-     </property>
-    </widget>
-    <widget class="QSpinBox" name="spinBoxPlace">
-     <property name="geometry">
-      <rect>
-       <x>60</x>
-       <y>350</y>
-       <width>41</width>
-       <height>25</height>
-      </rect>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>350</y>
-       <width>31</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Place </string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_5">
-     <property name="geometry">
-      <rect>
-       <x>110</x>
-       <y>350</y>
-       <width>111</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>passangers on floor: </string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="pushPlaceButton">
-     <property name="geometry">
-      <rect>
-       <x>260</x>
-       <y>350</y>
-       <width>71</width>
-       <height>24</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Place!</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_6">
-     <property name="geometry">
-      <rect>
-       <x>40</x>
-       <y>230</y>
-       <width>111</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Floor #Passengers:</string>
-     </property>
-    </widget>
-    <widget class="QLCDNumber" name="passengerOnFloorNumber">
-     <property name="geometry">
-      <rect>
-       <x>50</x>
-       <y>250</y>
-       <width>81</width>
-       <height>23</height>
-      </rect>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Plain</enum>
-     </property>
-     <property name="segmentStyle">
-      <enum>QLCDNumber::Flat</enum>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_7">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>290</y>
-       <width>41</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Move </string>
-     </property>
-    </widget>
-    <widget class="QSpinBox" name="spinBoxMove">
-     <property name="geometry">
-      <rect>
-       <x>60</x>
-       <y>290</y>
-       <width>41</width>
-       <height>25</height>
-      </rect>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_8">
-     <property name="geometry">
-      <rect>
-       <x>110</x>
-       <y>290</y>
-       <width>141</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>on to an available elevator: </string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="pushMoveButton">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="geometry">
-      <rect>
-       <x>260</x>
-       <y>290</y>
-       <width>71</width>
-       <height>24</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Move!</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_9">
-     <property name="geometry">
-      <rect>
-       <x>110</x>
-       <y>140</y>
-       <width>141</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>people leave the elevator.</string>
-     </property>
-    </widget>
-    <widget class="QSpinBox" name="spinBoxLeaveElevator">
-     <property name="geometry">
-      <rect>
-       <x>60</x>
-       <y>140</y>
-       <width>41</width>
-       <height>25</height>
-      </rect>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_10">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>140</y>
-       <width>31</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Have</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="pushLeaveButton">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="geometry">
-      <rect>
-       <x>260</x>
-       <y>140</y>
-       <width>71</width>
-       <height>24</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Leave!</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="pushAdd10FloorButton">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>380</y>
+       <y>390</y>
        <width>311</width>
-       <height>31</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Add 10 People to Each Floor</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="pushBuildingEmergencyButton">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>420</y>
-       <width>311</width>
-       <height>31</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Trigger Building Emergency!</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="pushEmergencyResetButton">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>460</y>
-       <width>311</width>
-       <height>31</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Reset from Emergency</string>
-     </property>
-    </widget>
-    <widget class="QGroupBox" name="groupBox">
-     <property name="geometry">
-      <rect>
-       <x>180</x>
-       <y>200</y>
-       <width>151</width>
-       <height>71</height>
+       <height>181</height>
       </rect>
      </property>
      <property name="title">
       <string/>
      </property>
-     <widget class="QPushButton" name="pushElevatorButton">
+     <widget class="QFrame" name="frame">
       <property name="geometry">
        <rect>
-        <x>10</x>
-        <y>20</y>
-        <width>131</width>
-        <height>31</height>
+        <x>0</x>
+        <y>10</y>
+        <width>311</width>
+        <height>171</height>
        </rect>
       </property>
-      <property name="text">
-       <string>Press Elevator Button</string>
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
       </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <widget class="QPushButton" name="pushEmergencyResetAllButton">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>130</y>
+         <width>291</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Reset All from Emergency</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pushBuildingEmergencyButton">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>90</y>
+         <width>291</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Trigger Building Emergency!</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pushAdd10FloorButton">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>50</y>
+         <width>291</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Add 10 People to Each Floor</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>10</y>
+         <width>41</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Place </string>
+       </property>
+      </widget>
+      <widget class="QSpinBox" name="spinBoxPlace">
+       <property name="geometry">
+        <rect>
+         <x>50</x>
+         <y>10</y>
+         <width>41</width>
+         <height>25</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_5">
+       <property name="geometry">
+        <rect>
+         <x>100</x>
+         <y>10</y>
+         <width>111</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>passangers on floor: </string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pushPlaceButton">
+       <property name="geometry">
+        <rect>
+         <x>220</x>
+         <y>10</y>
+         <width>81</width>
+         <height>24</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Place!</string>
+       </property>
+      </widget>
+     </widget>
+    </widget>
+    <widget class="QGroupBox" name="groupBox_3">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>210</y>
+       <width>331</width>
+       <height>171</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string/>
+     </property>
+     <widget class="QFrame" name="frame_3">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>10</y>
+        <width>331</width>
+        <height>161</height>
+       </rect>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <widget class="QLabel" name="label_2">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>0</y>
+         <width>141</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Select a floor:</string>
+       </property>
+      </widget>
+      <widget class="QComboBox" name="comboFloorBox">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>20</y>
+         <width>141</width>
+         <height>21</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLCDNumber" name="passengerOnFloorNumber">
+       <property name="geometry">
+        <rect>
+         <x>40</x>
+         <y>70</y>
+         <width>81</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Plain</enum>
+       </property>
+       <property name="segmentStyle">
+        <enum>QLCDNumber::Flat</enum>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_6">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>50</y>
+         <width>111</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Floor #Passengers:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_7">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>120</y>
+         <width>41</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Move </string>
+       </property>
+      </widget>
+      <widget class="QSpinBox" name="spinBoxMove">
+       <property name="geometry">
+        <rect>
+         <x>50</x>
+         <y>120</y>
+         <width>41</width>
+         <height>25</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QGroupBox" name="groupBox">
+       <property name="geometry">
+        <rect>
+         <x>160</x>
+         <y>0</y>
+         <width>161</width>
+         <height>111</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string>Buttons on Selected Elevator </string>
+       </property>
+       <widget class="QPushButton" name="pushElevatorButton">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>30</y>
+          <width>141</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Press Floor Button</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="pushHelpButton">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>70</y>
+          <width>141</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Press Help Button</string>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QLabel" name="label_8">
+       <property name="geometry">
+        <rect>
+         <x>100</x>
+         <y>120</y>
+         <width>141</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>on to an available elevator: </string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pushMoveButton">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="geometry">
+        <rect>
+         <x>250</x>
+         <y>120</y>
+         <width>71</width>
+         <height>24</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Move!</string>
+       </property>
+      </widget>
+     </widget>
+    </widget>
+    <widget class="QGroupBox" name="groupBox_4">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>30</y>
+       <width>331</width>
+       <height>171</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string/>
+     </property>
+     <widget class="QFrame" name="frame_2">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>10</y>
+        <width>331</width>
+        <height>161</height>
+       </rect>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <widget class="QComboBox" name="comboElevatorBox">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>20</y>
+         <width>141</width>
+         <height>21</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_1">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>0</y>
+         <width>141</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Select an Elevator:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_3">
+       <property name="geometry">
+        <rect>
+         <x>160</x>
+         <y>0</y>
+         <width>161</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Buttons activated on elevator:</string>
+       </property>
+      </widget>
+      <widget class="QTextBrowser" name="textBrowserButtonsPressed">
+       <property name="geometry">
+        <rect>
+         <x>160</x>
+         <y>20</y>
+         <width>161</width>
+         <height>91</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLCDNumber" name="passengerNumber">
+       <property name="geometry">
+        <rect>
+         <x>40</x>
+         <y>70</y>
+         <width>81</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Plain</enum>
+       </property>
+       <property name="segmentStyle">
+        <enum>QLCDNumber::Flat</enum>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_4">
+       <property name="geometry">
+        <rect>
+         <x>40</x>
+         <y>50</y>
+         <width>81</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string># Passengers:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_10">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>120</y>
+         <width>31</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Have</string>
+       </property>
+      </widget>
+      <widget class="QSpinBox" name="spinBoxLeaveElevator">
+       <property name="geometry">
+        <rect>
+         <x>50</x>
+         <y>120</y>
+         <width>41</width>
+         <height>25</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_9">
+       <property name="geometry">
+        <rect>
+         <x>100</x>
+         <y>120</y>
+         <width>141</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>people leave the elevator.</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pushLeaveButton">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="geometry">
+        <rect>
+         <x>250</x>
+         <y>120</y>
+         <width>71</width>
+         <height>24</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Leave!</string>
+       </property>
+      </widget>
      </widget>
     </widget>
    </widget>
@@ -377,8 +477,8 @@
      <rect>
       <x>10</x>
       <y>10</y>
-      <width>761</width>
-      <height>771</height>
+      <width>501</width>
+      <height>601</height>
      </rect>
     </property>
     <property name="widgetResizable">
@@ -389,8 +489,8 @@
       <rect>
        <x>0</x>
        <y>0</y>
-       <width>759</width>
-       <height>769</height>
+       <width>499</width>
+       <height>599</height>
       </rect>
      </property>
     </widget>
@@ -401,7 +501,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1140</width>
+     <width>881</width>
      <height>21</height>
     </rect>
    </property>
