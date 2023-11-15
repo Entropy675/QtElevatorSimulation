@@ -4,8 +4,8 @@
 // time in seconds
 #define TIME_ELEVATOR_OPEN                      10
 #define SCAN_REQUEST_TREE_SECS                  10
-#define ELEVATOR_SPEED_MS                       500
-#define HELP_COUNTER                            10
+#define ELEVATOR_SPEED_MS                       500*2
+#define HELP_COUNTER                            10 // each is *ELEVATOR_SPEED_MS
 #define ELEVATOR_BLOCK_DOOR_TIME_SENSITIVITY    3 // seconds
 
 // Dimensions and limits

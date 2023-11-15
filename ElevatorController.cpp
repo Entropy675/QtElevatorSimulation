@@ -158,12 +158,11 @@ void ElevatorController::handleScreenResized(int w, int h)
 
 void ElevatorController::updateDisplays()
 {
-    int ev = ui->comboElevatorBox->currentText().remove(0, 10).toInt() - 1; // stored from 0
+    int ev = ui->comboElevatorBox->currentText().remove(0, 10).toInt(); // stored from 0
 
-    ui->passengerNumber->display(elevators[ev]->numPassengers());
 
     QString buttonList = "";
-    const std::set<int>& blist = elevators[ev]->getButtonsPressed();
+    const std::set<int>& blist = elevators[ev - 1]->getButtonsPressed();
     for(const int& a : blist)
     {
         buttonList += QString::number(a) + " ";
@@ -172,6 +171,7 @@ void ElevatorController::updateDisplays()
 
     const int flr = ui->comboFloorBox->currentText().remove(0, 7).toInt();
     ui->passengerOnFloorNumber->display(floors[flr - 1]->peopleOnFloor());
+    ui->passengerNumber->display(elevators[ev - 1]->numPassengers());
 }
 
 void ElevatorController::buttonElevatorSubmit()
@@ -254,7 +254,7 @@ void ElevatorController::buttonLeaveElevator()
     const int val = ui->spinBoxLeaveElevator->value(); //usr input
     ui->spinBoxLeaveElevator->setValue(0);
 
-    emit removeElevatorPassengers(elevators[ev]->getId(), elevators[ev - 1]->currentFloor(), val);
+    emit removeElevatorPassengers(elevators[ev - 1]->getId(), elevators[ev - 1]->currentFloor(), val);
     floors[elevators[ev - 1]->currentFloor() - 1]->addPeople(val);
 
     // just set the combo box option to the one that people were put into automatically... for visibility
@@ -269,6 +269,8 @@ void ElevatorController::buttonLeaveElevator()
     // update the floor on people display
     ui->passengerOnFloorNumber->display(floors[elevators[ev - 1]->currentFloor()]->peopleOnFloor());
     updateDisplays();
+
+    controlMoveButtonActivated();
 }
 
 
@@ -308,7 +310,7 @@ void ElevatorController::controlMoveButtonActivated(Elevator* availableEv)
 {
     // we want to check if there is an elevator on the floor in door open state
     // & set the control button to active or not based on it
-    qDebug() << "BUTTON ACTIVATE: Activating/Deactivating the Move Button to allow moving ppl ";
+    //qDebug() << "BUTTON ACTIVATE: Activating/Deactivating the Move Button to allow moving ppl ";
 
     const int flr = ui->comboFloorBox->currentText().remove(0, 7).toInt();
     const int evNum = ui->comboElevatorBox->currentText().remove(0, 10).toInt();
@@ -317,11 +319,11 @@ void ElevatorController::controlMoveButtonActivated(Elevator* availableEv)
     {
         if(availableEv != nullptr)
             break;
-        if(ev->currentFloor() == flr && ev->currentState() == Elevator::DoorsOpen)
+        if(ev->currentFloor() == flr && ev->currentState() == Elevator::DoorsOpen || elevators[evNum - 1]->currentState() == Elevator::Overload)
             availableEv = ev;
     }
 
-    if(elevators[evNum - 1]->currentState() == Elevator::DoorsOpen)
+    if(elevators[evNum - 1]->currentState() == Elevator::DoorsOpen || elevators[evNum - 1]->currentState() == Elevator::Overload || elevators[evNum - 1]->currentState() == Elevator::Emergency)
         ui->pushLeaveButton->setEnabled(true);
     else if(ui->pushLeaveButton->isEnabled())
         ui->pushLeaveButton->setEnabled(false);

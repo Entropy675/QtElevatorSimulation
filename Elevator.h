@@ -68,6 +68,7 @@ private:
     bool emergencyFloorReached = false;
     bool callHelp = false;
     bool movingUp = true;
+    bool blockedTime = true;
     int helpCounter = 1;
     int doorsBlockedRecently = 0;
 

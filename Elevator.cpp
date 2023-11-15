@@ -12,6 +12,7 @@ Elevator::Elevator(int n)
     connect(elevatorUpdateTimer, &QTimer::timeout, this, &Elevator::updateElevator);
     elevatorUpdateTimer->start(ELEVATOR_SPEED_MS);
 
+    // some elaborate controlling of timers to ensure non-blocking (blocking messes up other Elevator Controller)
     delayTimer = new QTimer(this);
     delayTimer->setSingleShot(true); // Run only once
     connect(delayTimer, &QTimer::timeout, this, &Elevator::restartTimer);
@@ -110,14 +111,13 @@ void Elevator::updateElevator()
     std::set<int> combineList(moveList.begin(), moveList.end());
     combineList.insert(buttonsPressed.begin(), buttonsPressed.end());
 
-    if(AGGRESSIVE_LOGGING)
-    {
-        std::string s = " EV nums: ";
-        for(int i : combineList)
-            s += std::to_string(i) + " ";
-        if(state != Idle)
-            qDebug() << id << " EV state: " << state << " curr goal: " << curGoal << " cur floor: " << curFloor << s;
-    }
+
+    std::string s = " EV nums: ";
+    for(int i : combineList)
+        s += std::to_string(i) + " ";
+    if(state != Idle && (AGGRESSIVE_LOGGING ? true : (state != MovingUp && state != MovingDown)))
+        qDebug() << id << " EV state: " << state << " curr goal: " << curGoal << " cur floor: " << curFloor << s;
+
 
     if(callHelp)
     {
@@ -138,6 +138,12 @@ void Elevator::updateElevator()
     {
     case Idle:
 
+        if(passengers >= ELEVATOR_PEOPLE_LIMIT)
+        {
+            state = Overload;
+            return;
+        }
+
         if(combineList.size() != 0)
         {
             curGoal = *combineList.rbegin();
@@ -146,7 +152,7 @@ void Elevator::updateElevator()
 
         if(curGoal == curFloor)
         {
-            if(combineList.count(curFloor) > 0)
+            if(combineList.count(curFloor))
             {
                 state = DoorsOpen;
                 return;
@@ -250,15 +256,22 @@ void Elevator::updateElevator()
         moveList.erase(curFloor);
         buttonsPressed.erase(curFloor);
 
-        elevatorUpdateTimer->stop();
-        delayTimer->start(TIME_ELEVATOR_OPEN*1000);
-
-        if(passengers >= ELEVATOR_PEOPLE_LIMIT)
+        if(blockedTime)
         {
-            state = Overload;
-            return;
+            blockedTime = false;
+            elevatorUpdateTimer->stop();
+            delayTimer->start(TIME_ELEVATOR_OPEN*1000);
         }
-        state = DoorsClosing;
+        else
+        {
+            blockedTime = true;
+            if(passengers >= ELEVATOR_PEOPLE_LIMIT)
+            {
+                state = Overload;
+                return;
+            }
+            state = DoorsClosing;
+        }
 
         break;
     case DoorsClosing:
@@ -273,11 +286,18 @@ void Elevator::updateElevator()
         }
         emit doorClosed(curFloor, id);
 
-        elevatorUpdateTimer->stop();
-        delayTimer->start(1000);
-
-        emit floorChanged(curFloor, id, false);
-        state = Idle;
+        if(blockedTime)
+        {
+            blockedTime = false;
+            elevatorUpdateTimer->stop();
+            delayTimer->start(1000);
+        }
+        else
+        {
+            blockedTime = true;
+            emit floorChanged(curFloor, id, false);
+            state = Idle;
+        }
 
         break;
     case Overload:
@@ -285,7 +305,7 @@ void Elevator::updateElevator()
 
         if(passengers < ELEVATOR_PEOPLE_LIMIT)
         {
-            qDebug() << "EV: " << id << " ... A loud beeping noise is played as an overloaded elevator's doors close ... ";
+            qDebug() << "Elevator " << id << ": ... A loud beeping noise is played as an overloaded elevator's doors close ... ";
             state = DoorsClosing;
         }
 
@@ -333,12 +353,12 @@ void Elevator::unpressButton(int ev, int fb)
 
 void Elevator::helpButtonPressed(int ev)
 {
-    qDebug() << "HELP BUTTON: ELEVATOR " << ev << " id: " << id;
+    qDebug() << "!!! HELP BUTTON: ELEVATOR " << ev << " id: " << id;
     if(!(ev == -1 || ev == id))
         return;
     // contact emergency lines (front desk, 911)
     for(int i = 0; i < 3; i++)
-        qDebug() << "HELP BUTTON PRESSED: ELEVATOR " << id;
+        qDebug() << "! HELP BUTTON PRESSED: ELEVATOR " << id;
     callHelp = true;
 }
 
@@ -359,8 +379,17 @@ void Elevator::emergency(int ev)
         state = DoorsClosing;
         emit doorClosed(curFloor, id);
 
-        elevatorUpdateTimer->stop();
-        delayTimer->start(TIME_ELEVATOR_OPEN*1000);
+        if(blockedTime)
+        {
+            blockedTime = false;
+            elevatorUpdateTimer->stop();
+            delayTimer->start(TIME_ELEVATOR_OPEN*1000);
+            return;
+        }
+        else
+        {
+            blockedTime = true;
+        }
     }
 
     emit emergencyOnBoard(curFloor, id);
