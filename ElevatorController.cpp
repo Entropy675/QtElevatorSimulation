@@ -430,13 +430,13 @@ void ElevatorController::doorOpened(int flr, int ev)
     const int y = ev;
     if (!elevatorGridLayout->itemAtPosition(x, y))
     {
-        qDebug()  << "doorClosed(): No Item at position:  (" << x << ", " << y <<  ")";
+        qDebug()  << "doorOpened(): No Item at position:  (" << x << ", " << y <<  ")";
         return;
     }
     QWidget* wdg = elevatorGridLayout->itemAtPosition(x, y)->widget();
     if(QString::fromUtf8(wdg->metaObject()->className()) != "QLabel")
     {
-        qDebug()  << "doorClosed(): Item at position:  (" << x << ", " << y <<  ") " << "is a: " << QString::fromUtf8(wdg->metaObject()->className());
+        qDebug()  << "doorOpened(): Item at position:  (" << x << ", " << y <<  ") " << "is a: " << QString::fromUtf8(wdg->metaObject()->className());
         return;
     }
     QLabel* squarePrev = qobject_cast<QLabel*>(wdg);
@@ -476,13 +476,13 @@ void ElevatorController::doorBlocked(int flr, int ev)
 
     if (!elevatorGridLayout->itemAtPosition(x, y))
     {
-        qDebug()  << "doorClosed(): No Item at position:  (" << x << ", " << y <<  ")";
+        qDebug()  << "doorBlocked(): No Item at position:  (" << x << ", " << y <<  ")";
         return;
     }
     QWidget* wdg = elevatorGridLayout->itemAtPosition(x, y)->widget();
     if(QString::fromUtf8(wdg->metaObject()->className()) != "QLabel")
     {
-        qDebug()  << "doorClosed(): Item at position:  (" << x << ", " << y <<  ") " << "is a: " << QString::fromUtf8(wdg->metaObject()->className());
+        qDebug()  << "doorBlocked(): Item at position:  (" << x << ", " << y <<  ") " << "is a: " << QString::fromUtf8(wdg->metaObject()->className());
         return;
     }
     QLabel* squarePrev = qobject_cast<QLabel*>(wdg);
@@ -503,7 +503,7 @@ void ElevatorController::overloaded(int flr, int ev)
     QWidget* wdg = elevatorGridLayout->itemAtPosition(x, y)->widget();
     if(QString::fromUtf8(wdg->metaObject()->className()) != "QLabel")
     {
-        qDebug()  << "doorClosed(): Item at position:  (" << x << ", " << y <<  ") " << "is a: " << QString::fromUtf8(wdg->metaObject()->className());
+        qDebug()  << "overloaded(): Item at position:  (" << x << ", " << y <<  ") " << "is a: " << QString::fromUtf8(wdg->metaObject()->className());
         return;
     }
     QLabel* squarePrev = qobject_cast<QLabel*>(wdg);
