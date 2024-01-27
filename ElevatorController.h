@@ -23,24 +23,24 @@ class ElevatorController : public QObject
 {
     Q_OBJECT
 
-	struct  FloorDirection
-	{
-		int time;
-		int num = 0;
-		bool up = true;
-		
-		FloorDirection(int n, bool u) : num(n), up(u) 
-		{
-			time = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now() - std::chrono::system_clock::time_point()).count();
-		}
-		
-		// comparison operator for the priority queue, prioritize earliest request
-		bool operator<(const FloorDirection& other) const
-		{
-			return time < other.time;
+    struct  FloorDirection
+    {
+        int time;
+        int num = 0;
+        bool up = true;
+        
+        FloorDirection(int n, bool u) : num(n), up(u) 
+        {
+        	time = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now() - std::chrono::system_clock::time_point()).count();
+        }
+        
+        // comparison operator for the priority queue, prioritize earliest request
+        bool operator<(const FloorDirection& other) const
+        {
+        	return time < other.time;
         }
     };
-	
+
 public:
     ElevatorController(Ui::MainWindow* ui, int numElevators = NUM_ELEVATORS, int numFloors = NUM_FLOORS);
     ~ElevatorController(); // clean up floors
@@ -58,7 +58,7 @@ signals:
 
 public slots:
     // recieve signals from floors, relay to EVs
-	void buttonPressedUp(int floor);
+    void buttonPressedUp(int floor);
     void buttonPressedDown(int floor);
 
     // recieves from every elevator, handles UI
