@@ -384,42 +384,43 @@ void ElevatorController::elevatorFloorChanged(int floor, int ev, bool up)
 
     const int x = floors.size() - floor; // as the floors decrease, x increases (flr increase, x decrease)
     const int y = ev + 1;
+
     QLayoutItem* layoutItem = elevatorGridLayout->itemAtPosition(x, y); // check if we are looking at a valid ev
-
-    if (layoutItem)
+    if (!layoutItem)
     {
-        QWidget* widget = layoutItem->widget();
 
-        if (widget)
-        {
-            const QMetaObject* metaObject = widget->metaObject();
-            QString widgetType = QString::fromUtf8(metaObject->className());
-
-            if (widgetType == "QLabel")
-            {
-
-                QLabel* square = qobject_cast<QLabel*>(widget);
-                QLabel* squarePrev;
-
-                squarePrev = qobject_cast<QLabel*>(elevatorGridLayout->itemAtPosition((x - 1 + floors.size()) % floors.size(), y)->widget());
-                squarePrev->setStyleSheet(QString("background-color: gray;"));
-
-                squarePrev = qobject_cast<QLabel*>(elevatorGridLayout->itemAtPosition((x + 1)%floors.size(), y)->widget());
-                squarePrev->setStyleSheet(QString("background-color: gray;"));
-
-                if(elevators[ev]->currentState() == Elevator::Emergency)
-                    square->setStyleSheet("background-color: yellow;");
-                else
-                    square->setStyleSheet("background-color: red;");
-            }
-            else
-                qDebug() << "Widget type: " << widgetType;
-        }
-        else
-            qDebug() << "No widget at this position.";
-    } else
         qDebug() << "No layout item at this position.";
+        return;
+    }
 
+    QWidget* widget = layoutItem->widget();
+    if (!widget)
+    {
+        qDebug() << "No widget at this position.";
+        return;
+    }
+
+    const QMetaObject* metaObject = widget->metaObject();
+    QString widgetType = QString::fromUtf8(metaObject->className());
+
+    if (widgetType == "QLabel")
+    {
+        QLabel* square = qobject_cast<QLabel*>(widget);
+        QLabel* squarePrev;
+    
+        squarePrev = qobject_cast<QLabel*>(elevatorGridLayout->itemAtPosition((x - 1 + floors.size()) % floors.size(), y)->widget());
+        squarePrev->setStyleSheet(QString("background-color: gray;"));
+    
+        squarePrev = qobject_cast<QLabel*>(elevatorGridLayout->itemAtPosition((x + 1)%floors.size(), y)->widget());
+        squarePrev->setStyleSheet(QString("background-color: gray;"));
+    
+        if(elevators[ev]->currentState() == Elevator::Emergency)
+            square->setStyleSheet("background-color: yellow;");
+        else
+            square->setStyleSheet("background-color: red;");
+    }
+
+    qDebug() << "Widget type: " << widgetType;
 }
 
 void ElevatorController::doorOpened(int flr, int ev)
@@ -515,36 +516,36 @@ void ElevatorController::emergency(int flr, int ev)
     // a door has closed
     qDebug()  << "EV signal: Elevator emergency!! Elevator: " << ev;
 
-    if(flr == SAFE_FLOOR)
+    if(flr != SAFE_FLOOR)
+        return;
+
+    QLayoutItem* layoutItem = elevatorGridLayout->itemAtPosition(floors.size() - SAFE_FLOOR, ev); // check if we are looking at a valid ev
+    if (!layoutItem)
     {
-        QLayoutItem* layoutItem = elevatorGridLayout->itemAtPosition(floors.size() - SAFE_FLOOR, ev); // check if we are looking at a valid ev
-
-        if (layoutItem)
-        {
-            QWidget* widget = layoutItem->widget();
-
-            if (widget)
-            {
-                const QMetaObject* metaObject = widget->metaObject();
-                QString widgetType = QString::fromUtf8(metaObject->className());
-                if (widgetType == "QLabel")
-                {
-
-                    QLabel* square = qobject_cast<QLabel*>(widget);
-
-                    if(elevators[ev - 1]->currentState() == Elevator::Idle)
-                        square->setStyleSheet(QString("background-color: red;"));
-                    else
-                        square->setStyleSheet(QString("background-color: yellow;"));
-                }
-                else
-                    qDebug() << "Widget type: " << widgetType;
-            }
-            else
-                qDebug() << "No widget at this position.";
-        } else
-            qDebug() << "No layout item at this position.";
+        qDebug() << "No layout item at this position.";
+        return;
     }
+    
+    QWidget* widget = layoutItem->widget();
+    if (!widget)
+    {
+        qDebug() << "No widget at this position.";
+        return;
+    }
+    
+    const QMetaObject* metaObject = widget->metaObject();
+    QString widgetType = QString::fromUtf8(metaObject->className());
+    if (widgetType == "QLabel")
+    {
+        QLabel* square = qobject_cast<QLabel*>(widget);
+    
+        if(elevators[ev - 1]->currentState() == Elevator::Idle)
+            square->setStyleSheet(QString("background-color: red;"));
+        else
+            square->setStyleSheet(QString("background-color: yellow;"));
+    } 
+
+    qDebug() << "Widget type: " << widgetType;
 }
 
 // --- EV REQUEST FUNCS ---
