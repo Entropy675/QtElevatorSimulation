@@ -11,11 +11,11 @@
 
 class Elevator : public QObject
 {
-	Q_OBJECT
-	
+    Q_OBJECT
+
 public:
     enum ElevatorState 
-	{
+    {
         Idle,
         MovingUp,
         MovingDown,
@@ -28,9 +28,9 @@ public:
     Elevator(int nfloors = NUM_FLOORS);
     ~Elevator();
 
-	int getId() const;
+    int getId() const;
     int getNumFloorsReserved() const;
-	int currentFloor() const;
+    int currentFloor() const;
     int numPassengers() const;
     bool lastDirMovingUp() const;
     bool isButtonPressed(int) const;
