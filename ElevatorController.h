@@ -101,8 +101,8 @@ private:
     std::vector<Elevator*> elevators;
     std::vector<QThread*> threads;
 
-	// if there is no immediate available elevator, put request in this list as a FloorDirection
-	std::priority_queue<FloorDirection> earliestRequestTree;
+    // if there is no immediate available elevator, put request in this list as a FloorDirection
+    std::priority_queue<FloorDirection> earliestRequestTree;
     // this list should be periodically checked and if there are any values
     // and available elevators, pop from the root and work all the values out
 
